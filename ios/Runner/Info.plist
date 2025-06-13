@@ -9,7 +9,7 @@
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
-    <string>co.median.ios.myself2</string> <!-- Bundle ID ثابت -->
+    <string>co.median.ios.hsr</string> <!-- Bundle ID ثابت -->
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
