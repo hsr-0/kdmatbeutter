@@ -5,16 +5,16 @@ class StatsWidget extends StatelessWidget {
   final int totalMembers;
   final int officeCount;
   final int representationCount;
-  final int chiefsCount;
-  final int votersCount;
+  final int totalChiefs; // إضافة هذا
+  final int totalVoters; // إضافة هذا
 
   const StatsWidget({
     Key? key,
     required this.totalMembers,
     required this.officeCount,
     required this.representationCount,
-    required this.chiefsCount,
-    required this.votersCount,
+    required this.totalChiefs, // إضافة هذا
+    required this.totalVoters, // إضافة هذا
   }) : super(key: key);
 
   @override
@@ -45,8 +45,9 @@ class StatsWidget extends StatelessWidget {
             _buildStatItem(Icons.business, 'عدد المكاتب', officeCount),
             _buildStatItem(Icons.account_balance, 'عدد الممثليات', representationCount),
             _buildStatItem(Icons.people, 'إجمالي الأعضاء', totalMembers),
-            _buildStatItem(Icons.person, 'عدد الزعماء', chiefsCount),
-            _buildStatItem(Icons.how_to_vote, 'عدد الناخبين', votersCount),
+            Divider(),
+            _buildStatItem(Icons.leaderboard, 'عدد القادة', totalChiefs), // إضافة هذا
+            _buildStatItem(Icons.how_to_vote, 'إجمالي الناخبين', totalVoters), // إضافة هذا
           ],
         ),
         actions: [

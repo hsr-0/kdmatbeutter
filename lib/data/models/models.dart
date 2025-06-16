@@ -217,12 +217,11 @@ class RepresentationLeader {
     );
   }
 }
-
 /// نموذج يمثل منطقة في النظام
 class Region {
   final String id;
   final String name;
-  final RegionLeader leader;
+  final RegionLeader leader; // 1. غيرت من Leader إلى RegionLeader
   final Representation? representation;
   final Office? office;
 
@@ -238,7 +237,7 @@ class Region {
     return Region(
       id: _parseString(json['id']),
       name: _parseString(json['name'], 'منطقة بدون اسم'),
-      leader: RegionLeader.fromJson(json),
+      leader: RegionLeader.fromJson(json['leader'] ?? {}), // 2. غيرت من Leader إلى RegionLeader
       representation: json['representation'] != null ? Representation.fromJson(json['representation']) : null,
       office: json['office'] != null ? Office.fromJson(json['office']) : null,
     );
@@ -263,7 +262,7 @@ class RegionLeader {
 
   factory RegionLeader.fromJson(Map<String, dynamic> json) {
     return RegionLeader(
-      name: _parseString(json['region_leader_name'] ?? json['leader_name'] ?? json['name'], 'غير معروف'),
+      name: _parseString(json['name'], 'غير معروف'),
       title: _parseString(json['region_leader_title'] ?? json['leader_title'] ?? json['title'], ''),
       phone: _parseString(json['region_leader_phone'] ?? json['leader_phone'] ?? json['phone'], 'غير متوفر'),
       whatsapp: _parseString(json['region_leader_whatsapp'] ?? json['leader_whatsapp'] ?? json['whatsapp'], 'غير متوفر'),
@@ -271,7 +270,6 @@ class RegionLeader {
     );
   }
 }
-
 // ============ دوال مساعدة ============ //
 
 String _parseString(dynamic value, [String defaultValue = '']) {
@@ -299,5 +297,46 @@ List<T> _parseList<T>(dynamic list, T Function(dynamic) mapper) {
     return list.map(mapper).where((item) => item != null).cast<T>().toList();
   } catch (e) {
     return [];
+  }
+}
+class VotingStats {
+  final int totalChiefs;
+  final int totalVoters;
+  final String lastUpdated;
+
+  VotingStats({
+    required this.totalChiefs,
+    required this.totalVoters,
+    required this.lastUpdated,
+  });
+
+  factory VotingStats.fromJson(Map<String, dynamic> json) {
+    // حل نهائي لتحويل total_chiefs سواء كانت String أو int
+    final dynamic chiefsData = json['total_chiefs'];
+    final int parsedChiefs = chiefsData is int ? chiefsData
+        : int.tryParse(chiefsData?.toString() ?? '0') ?? 0;
+
+    return VotingStats(
+      totalChiefs: parsedChiefs,
+      totalVoters: json['total_voters'] as int? ?? 0,
+      lastUpdated: json['last_updated'] as String? ?? '',
+    );
+  }
+}
+
+class StatsResponse {
+  final bool success;
+  final VotingStats data;
+
+  StatsResponse({
+    required this.success,
+    required this.data,
+  });
+
+  factory StatsResponse.fromJson(Map<String, dynamic> json) {
+    return StatsResponse(
+      success: json['success'] as bool? ?? false,
+      data: VotingStats.fromJson(json['data'] as Map<String, dynamic>? ?? {}),
+    );
   }
 }

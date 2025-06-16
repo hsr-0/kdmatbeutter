@@ -11,9 +11,9 @@ import 'package:untitled4/presentation/pages/regions_screen.dart';
 import 'package:untitled4/presentation/pages/map_screen.dart';
 import 'package:untitled4/presentation/pages/office_leaders_screen.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:carousel_slider/carousel_slider.dart'; // لإضافة البنر القلاب
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:intl/intl.dart';
 
-import 'all_members_screen.dart';
 import 'chiefs_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -26,28 +26,32 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   int _totalMembers = 0;
   int _totalOffices = 0;
   int _totalRepresentations = 0;
-  int _totalChiefs = 0;
   int _currentBannerIndex = 0;
-  int _totalVoters = 0; // إضافة هذا المتغير
-
+  int _totalChiefs = 0;
+  int _totalVoters = 0;
   String _searchQuery = '';
   bool _isLoading = false;
   String? _errorMessage;
   late Future<List<Office>> _officesFuture;
   late Future<List<Representation>> _representationsFuture;
+  late Future<StatsResponse> _statsFuture;
 
-  // قائمة صور البنر القلاب
   final List<String> _bannerImages = [
-    'https://via.placeholder.com/800x400?text=بنر+1',
-    'https://via.placeholder.com/800x400?text=بنر+2',
-    'https://via.placeholder.com/800x400?text=بنر+3',
+    'assets/banners/banner.jpg',
+    'assets/banners/banner1.jpg',
+    'assets/banners/banner2.jpg',
+    'assets/banners/banner3.jpg',
+    'assets/banners/banner4.jpg',
+    'assets/banners/banner5.jpg',
+
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this); // زيادة طول التبويبات إلى 5
+    _tabController = TabController(length: 5, vsync: this);
     _loadInitialData();
+    _loadStatsData();
     _testApiConnection();
   }
 
@@ -61,6 +65,33 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     }
   }
 
+  Future<void> _loadStatsData() async {
+    if (!mounted) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final stats = await Provider.of<ApiService>(context, listen: false).getVotingStats();
+
+      if (!mounted) return;
+
+      setState(() {
+        _totalChiefs = stats.data.totalChiefs;
+        _totalVoters = stats.data.totalVoters;
+      });
+    } catch (e) {
+      debugPrint('Error loading stats data: $e');
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'تعذر تحميل إحصاءات القادة والناخبين';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   Future<void> _loadInitialData() async {
     if (!mounted) return;
 
@@ -69,17 +100,21 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       _errorMessage = null;
       _officesFuture = Provider.of<ApiService>(context, listen: false).getOffices();
       _representationsFuture = Provider.of<ApiService>(context, listen: false).getRepresentations();
+      _statsFuture = Provider.of<ApiService>(context, listen: false).getVotingStats();
     });
 
     try {
       final offices = await _officesFuture;
       final representations = await _representationsFuture;
+      final stats = await _statsFuture;
 
       if (!mounted) return;
       setState(() {
         _totalOffices = offices.length;
         _totalRepresentations = representations.length;
         _totalMembers = offices.fold(0, (sum, office) => sum + office.totalMembers);
+        _totalChiefs = stats.data.totalChiefs;
+        _totalVoters = stats.data.totalVoters;
         _isLoading = false;
       });
     } catch (e) {
@@ -99,43 +134,56 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     return 'حدث خطأ أثناء جلب البيانات. يرجى المحاولة لاحقاً';
   }
 
+  Future<void> _refreshAllData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await _loadInitialData();
+    } catch (e) {
+      debugPrint('Error refreshing all data: $e');
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = _getUserFriendlyError(e);
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('خدمتي'),
         centerTitle: true,
+        backgroundColor: Color(0xFFD5EFD5), // أخضر داكن
         actions: [
-          // إبقاء أيقونة إحصاءات النظام هنا
           StatsWidget(
             totalMembers: _totalMembers,
             officeCount: _totalOffices,
             representationCount: _totalRepresentations,
-            chiefsCount: _totalChiefs, // يجب إضافته
-            votersCount: _totalVoters, // يجب إضافته
+            totalChiefs: _totalChiefs,
+            totalVoters: _totalVoters,
           ),
-
-
-
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _loadInitialData,
+            onPressed: _refreshAllData,
             tooltip: 'تحديث البيانات',
           ),
         ],
-
-
-
-
-
-
-
         bottom: TabBar(
           controller: _tabController,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white.withOpacity(0.6),
           tabs: const [
-            Tab(icon: Icon(Icons.business), text: 'المكاتب'),
             Tab(icon: Icon(Icons.home), text: 'الرئيسية'),
-
+            Tab(icon: Icon(Icons.business), text: 'المكاتب'),
             Tab(icon: Icon(Icons.account_balance), text: 'الممثليات'),
             Tab(icon: Icon(Icons.map), text: 'الخريطة'),
             Tab(icon: Icon(Icons.people_alt), text: 'القادة'),
@@ -159,8 +207,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       controller: _tabController,
       children: [
         _buildOfficesTab(),
-        _buildHomeTab(), // تبويب الرئيسية الجديد
-
+        _buildHomeTab(),
         _buildRepresentationsTab(),
         MapScreen(),
         ChiefsScreen(),
@@ -168,84 +215,164 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     );
   }
 
-  // تبويب الرئيسية الجديد
   Widget _buildHomeTab() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // البنر القلاب
-          _buildBannerSlider(),
-
-          // إحصاءات النظام
-          _buildStatsSection(),
-
-          // قسم سريع للوصول إلى المكاتب (اختياري)
-          _buildQuickAccessSection(),
-        ],
+    return RefreshIndicator(
+      onRefresh: _refreshAllData,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildEnhancedBannerSlider(),
+            _buildStatsSection(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildBannerSlider() {
-    return Column(
-      children: [
-        CarouselSlider(
-          items: _bannerImages.map((imageUrl) {
-            return Container(
-              margin: const EdgeInsets.all(5.0),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(child: Icon(Icons.broken_image)),
-                    );
-                  },
+  Widget _buildEnhancedBannerSlider() {
+    if (_bannerImages.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Stack(
+        children: [
+          CarouselSlider(
+            items: _bannerImages.map((imagePath) {
+              return Container(
+                margin: const EdgeInsets.all(0),
+                child: ClipRRect(
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 250,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        height: 250,
+                        child: const Center(child: Icon(Icons.broken_image)),
+                      );
+                    },
+                  ),
+                ),
+              );
+            }).toList(),
+            options: CarouselOptions(
+              height: 250,
+              aspectRatio: 16/9,
+              viewportFraction: 1.0,
+              initialPage: 0,
+              enableInfiniteScroll: true,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 5),
+              autoPlayAnimationDuration: const Duration(milliseconds: 800),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enlargeCenterPage: false,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _currentBannerIndex = index;
+                });
+              },
+              scrollDirection: Axis.horizontal,
+            ),
+          ),
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.7),
+                  ],
                 ),
               ),
-            );
-          }).toList(),
-          options: CarouselOptions(
-            height: 200,
-            aspectRatio: 16/9,
-            viewportFraction: 0.95,
-            initialPage: 0,
-            enableInfiniteScroll: true,
-            reverse: false,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 5),
-            autoPlayAnimationDuration: const Duration(milliseconds: 800),
-            autoPlayCurve: Curves.fastOutSlowIn,
-            enlargeCenterPage: true,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentBannerIndex = index;
-              });
-            },
-            scrollDirection: Axis.horizontal,
+            ),
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _bannerImages.asMap().entries.map((entry) {
-            return Container(
-              width: 8.0,
-              height: 8.0,
-              margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _currentBannerIndex == entry.key
-                    ? Theme.of(context).primaryColor
-                    : Colors.grey,
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+          Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                Text(
+                  'تحالف خدمات',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 10,
+                        color: Colors.black,
+                        offset: Offset(2, 2),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  'Khadamat Alliance',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 10,
+                        color: Colors.black,
+                        offset: Offset(2, 2),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'تحالف سياسي عراقي يعمل وفق الهوية الوطنية تحت شعار عدالة أتنبية أعمار',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 10,
+                          color: Colors.black,
+                          offset: Offset(2, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 8,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: _bannerImages.asMap().entries.map((entry) {
+                return Container(
+                  width: 10.0,
+                  height: 10.0,
+                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentBannerIndex == entry.key
+                        ? Color(0xFF2E7D32)
+                        : Colors.white.withOpacity(0.5),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -256,147 +383,89 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Text(
-              'إحصاءات النظام',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF2E7D32).withOpacity(0.8),
+              Color(0xFF1B5E20),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Text(
+                'إحصاءات النظام',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              childAspectRatio: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              children: [
-                _buildStatItem(Icons.people, 'إجمالي الأعضاء', _totalMembers.toString()),
-                _buildStatItem(Icons.business, 'عدد المكاتب', _totalOffices.toString()),
-                _buildStatItem(Icons.account_balance, 'عدد الممثليات', _totalRepresentations.toString()),
-                _buildStatItem(Icons.leaderboard, 'عدد القادة', _totalChiefs.toString()),
-              ],
-            ),
-          ],
+              const SizedBox(height: 16),
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                childAspectRatio: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                children: [
+                  _buildStatItem(Icons.people, 'إجمالي اعضاء ناخبين المكاتب', _totalMembers.toString(), Colors.white),
+                  _buildStatItem(Icons.business, 'عدد المكاتب', _totalOffices.toString(), Colors.white),
+                  _buildStatItem(Icons.account_balance, 'عدد الممثليات', _totalRepresentations.toString(), Colors.white),
+                  _buildStatItem(Icons.leaderboard, 'عدد القادة', _totalChiefs.toString(), Colors.white),
+                  _buildStatItem(Icons.how_to_vote, 'إجمالي الناخبين', _totalVoters.toString(), Colors.white),
+                  _buildStatItem(Icons.update, 'آخر تحديث', _getLastUpdatedTime(), Colors.white),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildStatItem(IconData icon, String title, String value) {
+  String _getLastUpdatedTime() {
+    return DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+  }
+
+  Widget _buildStatItem(IconData icon, String title, String value, Color color) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white.withOpacity(0.3)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 30, color: Theme.of(context).primaryColor),
+          Icon(icon, size: 30, color: color),
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(fontSize: 14),
+            style: TextStyle(fontSize: 14, color: color),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickAccessSection() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'الوصول السريع',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: color,
             ),
-          ),
-          const SizedBox(height: 12),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            childAspectRatio: 1.5,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            children: [
-              _buildQuickAccessButton(
-                Icons.business,
-                'المكاتب',
-                    () => _tabController.animateTo(1),
-              ),
-              _buildQuickAccessButton(
-                Icons.account_balance,
-                'الممثليات',
-                    () => _tabController.animateTo(2),
-              ),
-              _buildQuickAccessButton(
-                Icons.map,
-                'الخريطة',
-                    () => _tabController.animateTo(3),
-              ),
-              _buildQuickAccessButton(
-                Icons.people_alt,
-                'القادة',
-                    () => _tabController.animateTo(4),
-              ),
-            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildQuickAccessButton(IconData icon, String label, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 30, color: Theme.of(context).primaryColor),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // باقي الدوال كما هي بدون تغيير
   Widget _buildErrorWidget() {
     return Center(
       child: Column(
@@ -411,7 +480,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: _loadInitialData,
+            onPressed: _refreshAllData,
             child: const Text('إعادة المحاولة'),
           ),
         ],
@@ -530,7 +599,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
 
   Widget _buildOfficesList(List<Office> offices) {
     return RefreshIndicator(
-      onRefresh: _loadInitialData,
+      onRefresh: _refreshAllData,
       child: ListView.builder(
         itemCount: offices.length,
         itemBuilder: (context, index) {
@@ -547,7 +616,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
 
   Widget _buildRepresentationsList(List<Representation> representations) {
     return RefreshIndicator(
-      onRefresh: _loadInitialData,
+      onRefresh: _refreshAllData,
       child: ListView.builder(
         itemCount: representations.length,
         itemBuilder: (context, index) {
@@ -584,18 +653,4 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     _tabController.dispose();
     super.dispose();
   }
-}
-
-void _navigateToAllMembers(BuildContext context, Office office) {
-  final allMembers = office.leaders.expand((leader) => leader.members).toList();
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => AllMembersScreen(
-        office: office,
-        members: allMembers, leaderName: '',
-      ),
-    ),
-  );
 }

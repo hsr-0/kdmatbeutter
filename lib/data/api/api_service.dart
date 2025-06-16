@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled4/data/models/models.dart';
 import '../models/chief_model.dart';
@@ -105,8 +106,41 @@ class ApiService {
       throw Exception('خطأ في تحويل بيانات الرؤساء: ${e.toString()}');
     }
   }
+  Future<StatsResponse> getVotingStats() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://myselfe.beytei.com/wp-json/maktabat/v1/stats'),
+        headers: {'Accept': 'application/json'},
+      );
 
+      debugPrint('API Response: ${response.statusCode} - ${response.body}');
 
+      if (response.statusCode == 200) {
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        debugPrint('Parsed Data: $data');
+
+        // تحويل صريح للأنواع
+        final chiefs = int.tryParse(data['data']['total_chiefs']?.toString() ?? '0') ?? 0;
+        final voters = data['data']['total_voters'] as int? ?? 0;
+
+        debugPrint('Converted - Chiefs: $chiefs, Voters: $voters');
+
+        return StatsResponse(
+          success: true,
+          data: VotingStats(
+            totalChiefs: chiefs,
+            totalVoters: voters,
+            lastUpdated: data['data']['last_updated'] ?? '',
+          ),
+        );
+      } else {
+        throw Exception('Failed to load stats: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error in getVotingStats: $e');
+      throw Exception('Network error: $e');
+    }
+  }
 
   /// ✅ دالة جلب جميع الزعماء مع ناخبيهم
   Future<Chief> getChiefDetails(int id) async {
