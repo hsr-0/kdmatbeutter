@@ -2,8 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- المعلومات الأساسية للتطبيق -->
     <key>CFBundleDevelopmentRegion</key>
-    <string>en</string>
+    <string>ar</string>
 
     <key>CFBundleDisplayName</key>
     <string>خدمتي</string>
@@ -23,12 +24,7 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
 
-    <key>CFBundleLocalizations</key>
-    <array>
-        <string>en</string>
-        <string>ar</string>
-    </array>
-
+    <!-- إعدادات الإصدار -->
     <key>CFBundleShortVersionString</key>
     <string>1.0.7</string>
 
@@ -38,6 +34,14 @@
     <key>CFBundleSignature</key>
     <string>????</string>
 
+    <!-- اللغات المدعومة -->
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>ar</string>
+    </array>
+
+    <!-- إعدادات Deep Linking -->
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -63,37 +67,70 @@
     <key>FlutterDeepLinkingEnabled</key>
     <true/>
 
+    <!-- إعدادات النظام الأساسية -->
     <key>LSRequiresIPhoneOS</key>
     <true/>
 
-    <!-- صلاحيات الاستخدام -->
+    <!-- صلاحيات الاستخدام (Privacy Descriptions) -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>google.com</key>
+            <dict>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+                <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+                <false/>
+            </dict>
+        </dict>
+    </dict>
+
     <key>NSCameraUsageDescription</key>
     <string>نحتاج إلى استخدام الكاميرا لالتقاط الصور أو مسح الباركود</string>
 
     <key>NSPhotoLibraryUsageDescription</key>
     <string>نحتاج الوصول إلى مكتبة الصور لاختيار الصور من جهازك</string>
 
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>نحتاج إذنًا لحفظ الصور في مكتبة الصور</string>
+
     <key>NSMicrophoneUsageDescription</key>
     <string>نستخدم الميكروفون للتسجيل الصوتي داخل التطبيق</string>
 
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>نحتاج إلى تحديد موقعك لتقديم خدمات أفضل</string>
+
+    <key>NSFaceIDUsageDescription</key>
+    <string>نستخدم FaceID لتسجيل الدخول الآمن</string>
+
+    <!-- إعدادات الإشعارات -->
     <key>NSUserNotificationUsageDescription</key>
     <string>نرسل لك إشعارات لتبقى على اطلاع بالتحديثات والعروض</string>
 
     <key>UIBackgroundModes</key>
     <array>
         <string>remote-notification</string>
+        <string>fetch</string>
     </array>
 
+    <!-- إعدادات الواجهة -->
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>
 
     <key>UIMainStoryboardFile</key>
     <string>Main</string>
 
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>armv7</string>
+    </array>
+
     <key>UISupportedInterfaceOrientations</key>
     <array>
         <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
         <string>UIInterfaceOrientationLandscapeLeft</string>
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
@@ -107,6 +144,31 @@
     </array>
 
     <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>
+
+    <!-- إعدادات iOS 13+ -->
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <false/>
+        <key>UISceneConfigurations</key>
+        <dict>
+            <key>UIWindowSceneSessionRoleApplication</key>
+            <array>
+                <dict>
+                    <key>UISceneConfigurationName</key>
+                    <string>Default Configuration</string>
+                    <key>UISceneDelegateClassName</key>
+                    <string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+                    <key>UISceneStoryboardFile</key>
+                    <string>Main</string>
+                </dict>
+            </array>
+        </dict>
+    </dict>
+
+    <!-- إعدادات Firebase (إذا كنت تستخدمها) -->
+    <key>FirebaseAppDelegateProxyEnabled</key>
     <false/>
 </dict>
 </plist>
