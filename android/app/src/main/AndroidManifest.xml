@@ -36,7 +36,7 @@
     <application
         android:label="خدمتي"
         android:name="${applicationName}"
-        android:icon="@drawable/whatsapp_image_2025_05_15_at_02_01_34_085a5258"
+        android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"> <!-- للاتصال بالسيرفرات غير الآمنة إذا لزم الأمر -->
 
         <!-- إعدادات إشعارات Firebase -->

@@ -18,11 +18,8 @@ dependencies:
   shared_preferences: ^2.2.2
   url_launcher: ^6.1.7
   firebase_core: ^2.0.0
-  flutter_launcher_icons: "^0.13.1"
   firebase_messaging: ^14.0.0
   flutter_local_notifications: ^18.0.1
-
-
   badges: ^2.0.3
   permission_handler: ^11.3.0
   photo_view: ^0.14.0
@@ -36,13 +33,21 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
   assets:
     - assets/banners/
+    - assets/icon/icon.jpg  # تأكد من وجود الصورة في هذا المسار
 
+flutter_launcher_icons:
+  android: true  # لإنشاء أيقونات أندرويد
+  ios: true      # لإنشاء أيقونات iOS
+  image_path: "assets/icon/icon.jpg"  # المسار إلى صورتك
+  remove_alpha_ios: true  # إزالة الشفافية لأيقونات iOS
+  min_sdk_android: 21     # الحد الأدنى لإصدار أندرويد
 
-
-
-
+  # إعدادات إضافية للأيقونات التكيفية لأندرويد (اختياري)
+  adaptive_icon_background: "#FFFFFF"  # لون الخلفية
+  # adaptive_icon_foreground: "assets/icon/icon_foreground.png"  # صورة المقدمة إذا كنت تستخدمها
