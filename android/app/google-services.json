@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "278333418708",
+    "project_id": "kdmate-7e7cb",
+    "storage_bucket": "kdmate-7e7cb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278333418708:android:8c3476bfcaa8f3a7dc9f41",
+        "android_client_info": {
+          "package_name": "co.median.ios.hsr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsWGUI2Zju5ulVsgpoPwVuRoa2plxsHA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278333418708:android:fdda6f6d8815c787dc9f41",
+        "android_client_info": {
+          "package_name": "com.example.untitled4"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsWGUI2Zju5ulVsgpoPwVuRoa2plxsHA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

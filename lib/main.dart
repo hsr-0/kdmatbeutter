@@ -4,8 +4,21 @@ import 'package:provider/provider.dart';
 import 'package:untitled4/data/api/api_service.dart';
 import 'package:untitled4/presentation/pages/main_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:untitled4/presentation/pages/ont_firbase.dart';
+import 'firebase_options.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  // تهيئة خدمة الإشعارات
+  await NotificationService().initialize();
+
+  // تعيين معالج الخلفية
+  FirebaseMessaging.onBackgroundMessage(NotificationService.backgroundHandler);
   runApp(
     MultiProvider(
       providers: [

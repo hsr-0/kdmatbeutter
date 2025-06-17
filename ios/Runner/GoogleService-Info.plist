@@ -2,22 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>266994090766-6ic3o5thaqej93dbsvohdbhl49vc40ad.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.266994090766-6ic3o5thaqej93dbsvohdbhl49vc40ad</string>
 	<key>API_KEY</key>
-	<string>AIzaSyD7cRZeGlqv1LqeCNfkeQUiasGmg8aStj4</string>
+	<string>AIzaSyAzeeYqScDsuvd5V7WpCOx5NN1CwyIICVM</string>
 	<key>GCM_SENDER_ID</key>
-	<string>266994090766</string>
+	<string>278333418708</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>co.median.ios.hsr</string>
 	<key>PROJECT_ID</key>
-	<string>beytei-me</string>
+	<string>kdmate-7e7cb</string>
 	<key>STORAGE_BUCKET</key>
-	<string>beytei-me.firebasestorage.app</string>
+	<string>kdmate-7e7cb.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:266994090766:ios:1e61d51d5dcdb007894d5f</string>
-	<key>DATABASE_URL</key>
-	<string>https://beytei-me-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+	<string>1:278333418708:ios:045086b31f27fcc0dc9f41</string>
 </dict>
 </plist>

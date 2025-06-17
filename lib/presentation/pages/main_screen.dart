@@ -37,7 +37,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   late Future<StatsResponse> _statsFuture;
 
   final List<String> _bannerImages = [
-    'assets/banners/banner.jpg',
+
     'assets/banners/banner1.jpg',
     'assets/banners/banner2.jpg',
     'assets/banners/banner3.jpg',
@@ -155,13 +155,13 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('خدمتي'),
         centerTitle: true,
-        backgroundColor: Color(0xFFD5EFD5), // أخضر داكن
         actions: [
           StatsWidget(
             totalMembers: _totalMembers,
@@ -178,12 +178,13 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white.withOpacity(0.6),
-          tabs: const [
-            Tab(icon: Icon(Icons.home), text: 'الرئيسية'),
+          indicatorColor: Colors.blueAccent,       // لون المؤشر
+          labelColor: Colors.black,                // أسود للنص المحدد
+          unselectedLabelColor: Colors.grey,       // رمادي للنص غير المحدد
+          labelStyle: TextStyle(fontWeight: FontWeight.bold), // نص غامق عند التحديد
+          tabs: const  [
             Tab(icon: Icon(Icons.business), text: 'المكاتب'),
+            Tab(icon: Icon(Icons.home), text: 'الرئيسية'),
             Tab(icon: Icon(Icons.account_balance), text: 'الممثليات'),
             Tab(icon: Icon(Icons.map), text: 'الخريطة'),
             Tab(icon: Icon(Icons.people_alt), text: 'القادة'),
@@ -332,7 +333,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'تحالف سياسي عراقي يعمل وفق الهوية الوطنية تحت شعار عدالة أتنبية أعمار',
+                    'تحالف سياسي عراقي يعمل وفق الهوية الوطنية تحت شعار عدالة تنمية أعمار',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -420,10 +421,18 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                   _buildStatItem(Icons.business, 'عدد المكاتب', _totalOffices.toString(), Colors.white),
                   _buildStatItem(Icons.account_balance, 'عدد الممثليات', _totalRepresentations.toString(), Colors.white),
                   _buildStatItem(Icons.leaderboard, 'عدد القادة', _totalChiefs.toString(), Colors.white),
-                  _buildStatItem(Icons.how_to_vote, 'إجمالي الناخبين', _totalVoters.toString(), Colors.white),
+                  _buildStatItem(Icons.how_to_vote, ' إجمالي الناخبين من القادة', _totalVoters.toString(), Colors.white),
                   _buildStatItem(Icons.update, 'آخر تحديث', _getLastUpdatedTime(), Colors.white),
                 ],
               ),
+              const SizedBox(height: 16),
+              Text(
+                'برمـــجـــة وتطــــويـــر حســيـــن ســـعـــد المجبـــلـــي',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 20,
+                ),
+              )
             ],
           ),
         ),
