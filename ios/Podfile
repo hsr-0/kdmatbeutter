@@ -1,5 +1,4 @@
-# أزل هذا السطر إذا كان موجوداً:
-# platform :ios, '14.0'
+platform :ios, '14.0'
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
