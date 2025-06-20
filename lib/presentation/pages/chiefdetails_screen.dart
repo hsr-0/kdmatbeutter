@@ -33,7 +33,6 @@ class _ChiefDetailsScreenState extends State<ChiefDetailsScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // استبدل هذا بطلب API الفعلي لجلب الناخبين
       final response = await http.get(
           Uri.parse('https://myselfe.beytei.com/wp-json/maktabat/v1/chief/${widget.chief.id}')
       );
@@ -45,7 +44,6 @@ class _ChiefDetailsScreenState extends State<ChiefDetailsScreen> {
               .map((voter) => Voter.fromJson(voter))
               .toList();
 
-          // تحديث عدد الناخبين إذا كان مختلفاً
           if (data['data']['voters_count'] != widget.chief.votersCount) {
             widget.chief.votersCount = int.parse(data['data']['voters_count'].toString());
           }
@@ -59,6 +57,42 @@ class _ChiefDetailsScreenState extends State<ChiefDetailsScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  // دالة جديدة معالجة لفتح واتساب
+  Future<void> _launchWhatsApp(String phone) async {
+    // تنظيف الرقم من أي أحرف غير رقمية
+    String cleanNumber = phone.replaceAll(RegExp(r'[^0-9]'), '');
+
+    // إذا بدأ الرقم بـ 0 نستبدلها بـ 964
+    if (cleanNumber.startsWith('0')) {
+      cleanNumber = '964${cleanNumber.substring(1)}';
+    }
+    // إذا كان الرقم أقل من 10 أرقام نضيف 964
+    else if (cleanNumber.length < 10) {
+      cleanNumber = '964$cleanNumber';
+    }
+
+    final urls = [
+      "https://wa.me/$cleanNumber",
+      "https://api.whatsapp.com/send?phone=$cleanNumber",
+      "whatsapp://send?phone=$cleanNumber"
+    ];
+
+    for (final url in urls) {
+      try {
+        if (await canLaunch(url)) {
+          await launch(url);
+          return;
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('تعذر فتح الواتساب')),
+    );
   }
 
   @override
@@ -128,7 +162,7 @@ class _ChiefDetailsScreenState extends State<ChiefDetailsScreen> {
                   _buildActionButton(
                     icon: Icons.chat,
                     label: 'واتساب',
-                    onPressed: () => _launchUrl('https://wa.me/${widget.chief.whatsapp}'),
+                    onPressed: () => _launchWhatsApp(widget.chief.whatsapp!),
                   ),
               ],
             ),
@@ -256,7 +290,9 @@ class _ChiefDetailsScreenState extends State<ChiefDetailsScreen> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر فتح الرابط')),
+      );
     }
   }
 }
