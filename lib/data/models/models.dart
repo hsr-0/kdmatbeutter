@@ -1,5 +1,20 @@
 // models.dart
+class StationManager {
+  final String name;
+  final String phone;
 
+  StationManager({
+    required this.name,
+    required this.phone,
+  });
+
+  factory StationManager.fromJson(Map<String, dynamic> json) {
+    return StationManager(
+      name: json['name']?.toString() ?? 'غير معروف',
+      phone: json['phone']?.toString() ?? 'غير متوفر',
+    );
+  }
+}
 /// نموذج يمثل مكتباً في النظام
 class Office {
   final String id;
@@ -224,6 +239,8 @@ class Region {
   final RegionLeader leader; // 1. غيرت من Leader إلى RegionLeader
   final Representation? representation;
   final Office? office;
+  final List<StationManager> stationManagers; // تمت الإضافة
+
 
   Region({
     required this.id,
@@ -231,6 +248,8 @@ class Region {
     required this.leader,
     this.representation,
     this.office,
+    required this.stationManagers, // تمت الإضافة
+
   });
 
   factory Region.fromJson(Map<String, dynamic> json) {
@@ -240,6 +259,11 @@ class Region {
       leader: RegionLeader.fromJson(json['leader'] ?? {}), // 2. غيرت من Leader إلى RegionLeader
       representation: json['representation'] != null ? Representation.fromJson(json['representation']) : null,
       office: json['office'] != null ? Office.fromJson(json['office']) : null,
+      // تمت إضافة هذا الجزء لجلب قائمة مسؤولي المحطات
+      stationManagers: (json['station_managers'] as List<dynamic>?)
+          ?.map((e) => StationManager.fromJson(e))
+          .toList() ??
+          [],
     );
   }
 }

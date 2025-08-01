@@ -2,7 +2,7 @@ name: untitled4
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.0.0+9
+version: 1.0.0+10
 
 environment:
   sdk: ^3.7.2
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.5
+  http: ^1.4.0
   provider: ^6.0.5
   flutter_svg: ^2.0.7
   google_maps_flutter: ^2.2.3
@@ -18,6 +18,13 @@ dependencies:
   shared_preferences: ^2.2.2
   url_launcher: ^6.1.7
   firebase_core: ^2.0.0
+  geolocator: ^11.0.0 # أضف هذا السطر
+
+
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  flutter_map_marker_popup: ^6.1.2
+
   firebase_messaging: ^14.0.0
   flutter_local_notifications: ^18.0.1
   badges: ^2.0.3
