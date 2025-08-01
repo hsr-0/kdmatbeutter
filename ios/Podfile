@@ -39,8 +39,18 @@ target 'Runner' do
 
 end
 
+# --- الجزء الذي تم تعديله ---
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+
+    # هذا الكود يقوم بحل مشكلة unsupported option '-G'
+    target.build_configurations.each do |config|
+      if config.build_settings['OTHER_CFLAGS']
+        config.build_settings['OTHER_CFLAGS'].reject! { |flag| flag == '-G' }
+      end
+    end
+    # --- نهاية الكود المضاف ---
+
   end
 end
