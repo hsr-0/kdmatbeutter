@@ -5,11 +5,11 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>منصة بيتي </string>
+    <string>خدمتي </string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
-    <string>co.median.ios.wqwnby</string>
+    <string>co.median.ios.hsr</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>11.0</string>
     <key>CFBundleName</key>
@@ -24,7 +24,7 @@
     <key>CFBundleShortVersionString</key>
     <string>1.2.1</string>
     <key>CFBundleVersion</key>
-    <string>17</string>
+    <string>7</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
