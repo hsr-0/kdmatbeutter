@@ -31,26 +31,19 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
-  # ✅ إضافة Firebase الأساسي
-  pod 'FirebaseCore'
+  # ⭐ [إضافة مهمة] - مكتبة المصادقة (Authentication)
+  pod 'Firebase/Auth'
 
-  # ✅ Firestore (نسخة مستقرة من Firebase)
-  pod 'FirebaseFirestore'
+  # ⭐ [إضافة مهمة] - مكتبة الإشعارات (Messaging)
+  pod 'Firebase/Messaging'
+
+  # ✅ Firestore (كانت موجودة بشكل غير كامل، هذه هي الطريقة الصحيحة)
+  pod 'Firebase/Firestore'
 
 end
 
-# --- الجزء الذي تم تعديله ---
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-
-    # هذا الكود يقوم بحل مشكلة unsupported option '-G'
-    target.build_configurations.each do |config|
-      if config.build_settings['OTHER_CFLAGS']
-        config.build_settings['OTHER_CFLAGS'].reject! { |flag| flag == '-G' }
-      end
-    end
-    # --- نهاية الكود المضاف ---
-
   end
 end
