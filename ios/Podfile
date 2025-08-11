@@ -31,7 +31,7 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
-  # ✅ إضافة Firebase الأساسي
+  # ✅ Firebase الأساسي
   pod 'FirebaseCore'
   pod 'FirebaseFirestore'
 end
@@ -40,9 +40,22 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 
-    # ✅ نضمن أن كل الـ Pods تشتغل على iOS 14.0
     target.build_configurations.each do |config|
+      # ✅ تثبيت iOS Deployment Target على 14.0
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+
+      # ✅ إزالة أي خيار -G من إعدادات الـ CMake أو الـ Compiler
+      if config.build_settings['OTHER_CFLAGS'].is_a?(Array)
+        config.build_settings['OTHER_CFLAGS'] = config.build_settings['OTHER_CFLAGS'].map { |flag| flag.gsub(/-G\s+\S+/, '') }
+      elsif config.build_settings['OTHER_CFLAGS'].is_a?(String)
+        config.build_settings['OTHER_CFLAGS'] = config.build_settings['OTHER_CFLAGS'].gsub(/-G\s+\S+/, '')
+      end
+
+      if config.build_settings['OTHER_CPLUSPLUSFLAGS'].is_a?(Array)
+        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = config.build_settings['OTHER_CPLUSPLUSFLAGS'].map { |flag| flag.gsub(/-G\s+\S+/, '') }
+      elsif config.build_settings['OTHER_CPLUSPLUSFLAGS'].is_a?(String)
+        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = config.build_settings['OTHER_CPLUSPLUSFLAGS'].gsub(/-G\s+\S+/, '')
+      end
     end
   end
 end
