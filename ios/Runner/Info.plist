@@ -30,10 +30,10 @@
     </array>
 
     <key>CFBundleShortVersionString</key>
-    <string>1.2.1</string>
+    <string>1.2.2</string>
 
     <key>CFBundleVersion</key>
-    <string>9</string>
+    <string>10</string>
 
     <key>CFBundleSignature</key>
     <string>????</string>
@@ -108,5 +108,13 @@
 
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+
+    <!-- إضافة هذه الفقرة للسماح بالوصول لشبكة الإنترنت -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+
 </dict>
 </plist>
