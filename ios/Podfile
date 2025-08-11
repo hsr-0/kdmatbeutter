@@ -1,6 +1,4 @@
-#platform :ios, '14.0' # Use the platform version specified by Flutter
-use_frameworks!
-use_modular_headers!
+platform :ios, '14.0'
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
@@ -33,25 +31,16 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
+  # ✅ إضافة Firebase الأساسي
   pod 'FirebaseCore'
+
+  # ✅ Firestore (نسخة مستقرة من Firebase)
   pod 'FirebaseFirestore'
 
 end
 
-# --- [الحل النهائي لمشكلة '-G'] ---
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-
-    # هذا السكربت يبحث في كل إعدادات البناء ويزيل الخيار '-G'
-    target.build_configurations.each do |config|
-      current_cflags = config.build_settings['OTHER_CFLAGS']
-      if current_cflags
-        cflags_array = [current_cflags].flatten
-        cflags_array.reject! { |flag| flag == '-G' }
-        config.build_settings['OTHER_CFLAGS'] = cflags_array
-      end
-    end
-    
   end
 end
