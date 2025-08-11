@@ -131,7 +131,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     if (error is http.ClientException) {
       return 'تعذر الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت';
     }
-    return 'حدث خطأ أثناء جلب البيانات. يرجى المحاولة لاحقاً';
+    return 'يرجى التحقق من اتصال الإنترنت. يرجى المحاولة لاحقاً';
   }
 
   Future<void> _refreshAllData() async {
